@@ -1,0 +1,85 @@
+BootStrap: docker
+From: ubuntu:24.04
+
+%labels
+  Maintainer buzh@uio.no
+
+%environment
+  export LANG=en_US.UTF-8                                                                                                                                                                                                                                                                 export LC_ALL=en_US.UTF-8
+
+%files
+ # Place required jar files etc here. hint: use a r/w overlay to easily fetch them via GUI
+ PCF/FP /opt/PCF/FragPipe
+ 
+
+%post
+  # Dont ask questions during install
+  export DEBIAN_FRONTEND=noninteractive
+
+  #sed -i 's/deb$/deb deb-src/g' /etc/apt/sources.list.d/ubuntu.sources
+  apt -y update
+  apt -y upgrade
+  apt-get install -y --no-install-recommends \
+    ubuntu-minimal \
+    ubuntu-standard \
+    locales \
+    gpg \
+    gpg-agent \
+    software-properties-common \
+    wget \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libopenblas-dev \
+    libudunits2-dev \
+    libgdal-dev \
+    libgeos-dev \
+    libproj-dev \
+    libfontconfig1-dev \
+    libgsl-dev \
+    git \
+    openssh-client \
+    dirmngr \
+    curl \
+    xubuntu-desktop \
+    libgl1 \
+    libgomp1 \
+    tcl-dev \
+    lua5.4 \
+    liblua5.4-dev \
+    lua-posix \
+    lua-posix-dev \
+    lua-filesystem \
+    openjdk-11-jdk \
+    python3-pip \
+    python3-venv \
+    gdebi-core
+
+  
+#  # Lmod requires
+#  update-alternatives --install /usr/bin/lua lua-interpreter /usr/bin/lua5.4 130
+#  update-alternatives --install /usr/bin/luac lua-compiler /usr/bin/luac5.4 130
+#
+#  apt-get -y install luarocks
+#  luarocks-5.4 install luaposix
+
+  # Configure default locale
+  echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+  locale-gen en_US.utf8
+  /usr/sbin/update-locale LANG=en_US.UTF-8
+  export LC_ALL=en_US.UTF-8
+  export LANG=en_US.UTF-8
+
+  # Install OOD deps
+  wget -q -O- https://packagecloud.io/dcommander/turbovnc/gpgkey | \
+   gpg --dearmor >/etc/apt/trusted.gpg.d/TurboVNC.gpg
+  curl https://raw.githubusercontent.com/TurboVNC/repo/main/TurboVNC.list > /etc/apt/sources.list.d/turbovnc.list 
+
+  apt-get update
+  apt-get install -y turbovnc python3-websockify
+  
+
+  # Clean up
+  rm -rf /var/lib/apt/lists/*

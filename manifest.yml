@@ -1,0 +1,9 @@
+---
+name: Fox FragPipe
+category: Interactive Apps
+subcategory: Desktops
+role: batch_connect
+description: |
+  FragPipe is a comprehensive computational platform for analyzing mass spectrometry-based proteomics data.
+tile:
+  sub_caption: "FragPipe desktop GUI"

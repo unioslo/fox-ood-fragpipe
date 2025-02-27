@@ -1,0 +1,54 @@
+---
+batch_connect:
+  template: vnc
+  websockify_cmd: '/usr/bin/websockify'
+  script_wrapper: |
+    cat << "EOF" > container.sh
+    export PATH="$PATH:/opt/TurboVNC/bin"
+    xset s off -dpms
+    xset -b
+    source /opt/PCF/PCFvenv/bin/activate || echo "Failed to load venv"
+
+    %s
+    EOF
+
+    export APPTAINER_BINDPATH="$HOME,/cluster,/fp,/srv,/var/run,/tmp,/node,/localscratch,/etc/profile.d,/projects,/etc/ssh/ssh_config.d"
+
+    apptainer run /cluster/opt/fox-fragpipe-1.0.0.sif /bin/bash container.sh
+
+script:
+  job_name: "PCF Desktop"
+  native: [
+            "-c", "<%= ec_cpus.blank?  ? 1 : ec_cpus.to_i %>",
+           <%- if ec_gpus.to_i > 0 -%>
+              <%- case ec_alacarte -%>
+                <%- when 'RTX30' -%>
+                  "--partition=accel",
+                  "--gres=gpu:rtx30:<%= ec_gpus.to_i %>",
+                <%- when 'A100-40' -%>
+                  "--partition=accel",
+                  "--gres=gpu:a100:<%= ec_gpus.to_i %>",
+                  "--exclude=gpu-[7-9]",
+                <%- when 'A100-80' -%>
+                  "--partition=accel",
+                  "--gres=gpu:a100:<%= ec_gpus.to_i %>",
+                  "--exclude=gpu-[1-2,13]",
+                <% when 'MIG' -%>
+                  "--partition=mig",
+                  "-G", "<%= ec_gpus.to_i %>",
+                <%- else -%>
+                  "--partition=accel",
+                  "-G", "<%= ec_gpus.to_i %>",
+                <%- end -%> 
+
+            <%- else -%>
+                "--partition=normal",
+            <%- end -%>
+    
+            <%- if not ec_mem.blank? -%>
+                "--mem", "<%= ec_mem.to_i %>G"
+            <%- end -%>
+
+          ]
+
+            

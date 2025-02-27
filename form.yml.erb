@@ -1,0 +1,51 @@
+---
+cluster: "fox"
+
+form:
+  - auto_accounts
+  - ec_alacarte
+  - ec_mem
+  - ec_cpus
+  - ec_gpus
+  - bc_num_hours
+  - ec_modules
+
+attributes:
+  auto_accounts:
+   label: "Choose the Educloud project:"
+   help: |
+          <small>If you are unsure, ask the project principal</small>
+
+<%= FormTemplate.fox_alacarte %>
+
+  ec_cpus:
+    label: "Number of CPU cores:"
+    widget: "number_field"
+    value: "1"
+    required: true
+
+  ec_gpus:
+    label: "Number of GPUs:"
+    widget: "number_field"
+    value: "0"
+    required: true
+
+  ec_mem:
+    label: "RAM (in GB):"
+    value: "1"
+    widget: "number_field"
+    required: true
+
+  bc_num_hours:
+    label: "Runtime (in hours) (required)"
+    widget: "number_field"
+    required: true
+    value: "1"
+
+  ec_modules:
+   label: "Additional modules (optional)"
+   value: ''
+   cacheable: false
+   help: <small>Space separated list of additional modules to load</br/>
+         Run `module avail` for a full list. </small>
+
