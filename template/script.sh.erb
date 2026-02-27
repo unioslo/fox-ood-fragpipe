@@ -1,3 +1,4 @@
+set -x
 cd
 export PS1="[\u@\h \W-Apptainer]\$ "
 # Remove any preconfigured monitors
@@ -52,4 +53,7 @@ xfconf-query -c xfce4-screensaver -p /lock/enabled -s false
 
 # Start up xfce desktop (block until user logs out of desktop)
 xfce4-session &
+export no_proxy="localhost,.fox,10.110.0.0/16"
+#export JAVA_OPTS="-Dhttp.proxyHost=10.110.0.12 -Dhttp.proxyPort=3128"
+export JAVA_OPTS="-Djava.net.useSystemProxies=true"
 /opt/PCF/FragPipe/22.0-Java-11/bin/fragpipe
